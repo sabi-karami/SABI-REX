@@ -32,7 +32,7 @@ def _ws_base():
     b = (os.environ.get("REX_WS_BASE") or "").strip()
     if not _re.fullmatch(r"/cdn/[A-Za-z0-9-]{8,64}", b):
         try:
-            b = "/cdn/" + open("/var/lib/marzban/rex_path").read().strip()
+            b = "/cdn/" + open("/var/lib/sabirex/rex_path").read().strip()
         except Exception:
             b = ""
     return b if _re.fullmatch(r"/cdn/[A-Za-z0-9-]{8,64}", b) else "/cdn/rex"
@@ -193,7 +193,7 @@ def direct(tag, path):
 CORE = ("remark", "address", "port", "sni", "host", "path", "security", "alpn", "fingerprint")
 
 def same(cur, want):
-    # core fields must match; extra fields only if this Marzban version has them (no endless re-writes)
+    # core fields must match; extra fields only if this core version has them (no endless re-writes)
     return all(cur.get(k) == v for k, v in want.items() if k in CORE or k in cur)
 
 def is_default(h):
@@ -258,7 +258,7 @@ while True:
                 req("PUT", "/api/hosts", hosts, token=tok)
             except urllib.error.HTTPError as he:
                 if he.code in (400, 422):
-                    # this Marzban version rejected a fragment / fingerprint value -> plain chrome + no fragment,
+                    # this core version rejected a fragment / fingerprint value -> plain chrome + no fragment,
                     # every config keeps working (and keeps its own name)
                     why = he.read().decode(errors="ignore")[:300]
                     print(f"[guard] panel rejected a host value ({he.code}): {why}", flush=True)
@@ -273,7 +273,7 @@ while True:
                     except urllib.error.HTTPError as he2:
                         if he2.code not in (400, 422):
                             raise
-                        # still refused: last safe step = plain http/1.1 and no Mux (works on every Marzban version)
+                        # still refused: last safe step = plain http/1.1 and no Mux (works on every core version)
                         print(f"[guard] still rejected ({he2.code}): {he2.read().decode(errors='ignore')[:300]}", flush=True)
                         print("[guard] last safe step: http/1.1 + no Mux on our configs", flush=True)
                         SAFE_PLAIN = True

@@ -1,10 +1,10 @@
 # Rebuilds the Xray config on every start from the repo files.
 # The panel's Core Settings are read-only, so the repo is the single source of truth:
 # no stale config from an old deploy, no corrupt JSON, and the locked inbound is always first.
-# ⚡ Fast transports are added ONLY when this image's Xray AND Marzban both support them,
+# ⚡ Fast transports are added ONLY when this image's Xray AND core both support them,
 #    so a newer feature can never stop the core (all WS configs keep working no matter what).
 import json, os, re, shutil, subprocess, time
-DST = "/var/lib/marzban/xray_config.json"
+DST = "/var/lib/sabirex/xray_config.json"
 base = json.load(open("/opt/xray_config.json"))
 locked = json.load(open("/opt/locked_inbound.json"))
 if os.path.exists(DST):
@@ -23,7 +23,7 @@ def xray_version():
     except Exception:
         return (0, 0, 0)
 
-def marzban_knows(word):
+def core_knows(word):
     for root, _, files in os.walk("/code/app"):
         for f in files:
             if f.endswith(".py"):
@@ -46,7 +46,7 @@ def ws_base():
     b = (os.environ.get("REX_WS_BASE") or "").strip()
     if not re.fullmatch(r"/cdn/[A-Za-z0-9-]{8,64}", b):
         try:
-            b = "/cdn/" + open("/var/lib/marzban/rex_path").read().strip()
+            b = "/cdn/" + open("/var/lib/sabirex/rex_path").read().strip()
         except Exception:
             b = ""
     return b if re.fullmatch(r"/cdn/[A-Za-z0-9-]{8,64}", b) else "/cdn/rex"
@@ -63,7 +63,7 @@ ver = xray_version()
 extra = []
 if os.environ.get("REX_FAST", "1") != "0":
     # HTTPUpgrade: same path as WS through Railway/Cloudflare, but lighter (no WS framing) -> faster
-    if ver >= (1, 8, 9) and marzban_knows("httpupgrade"):
+    if ver >= (1, 8, 9) and core_knows("httpupgrade"):
         extra.append(inbound("VLESS HTTPUPGRADE", 2005, "httpupgrade", {"httpupgradeSettings": {"path": B + "/u"}}))
     # XHTTP (or the older SplitHTTP): plain HTTP requests, passes any CDN, very stable on strict operators.
     #   Same recipe as the Vodiwalker panel (runs on Railway): TWO XHTTP configs, each with its own fixed mode
@@ -71,17 +71,17 @@ if os.environ.get("REX_FAST", "1") != "0":
     #     stream-up  = one long upload + one download stream (fewer requests = higher speed)
     #   ON by default (REX_XHTTP=0 turns it off; its 2 names then move to HTTPUpgrade automatically).
     XH = os.environ.get("REX_XHTTP", "1") != "0"
-    if XH and ver >= (24, 11, 0) and marzban_knows("xhttp"):
+    if XH and ver >= (24, 11, 0) and core_knows("xhttp"):
         extra.append(inbound("VLESS XHTTP", 2006, "xhttp", {"xhttpSettings": {"path": B + "/x", "mode": "packet-up"}}))
         extra.append(inbound("VLESS XHTTP SU", 2007, "xhttp", {"xhttpSettings": {"path": B + "/s", "mode": "stream-up"}}))
-    elif XH and ver >= (1, 8, 16) and marzban_knows("splithttp"):
+    elif XH and ver >= (1, 8, 16) and core_knows("splithttp"):
         extra.append(inbound("VLESS XHTTP", 2006, "splithttp", {"splithttpSettings": {"path": B + "/x"}}))   # older Xray: packet style only
 
 # 🛰 VLESS REALITY on a Railway TCP Proxy (optional): raw TCP, no web edge in between -> the lowest overhead.
 #    Only when you turn on Settings > Networking > TCP Proxy for this service (Railway then sets these variables).
 REALITY_TAG = "VLESS REALITY"
 def reality_keys():
-    kf = "/var/lib/marzban/rex_reality.json"
+    kf = "/var/lib/sabirex/rex_reality.json"
     try:
         k = json.load(open(kf))
         if k.get("private") and k.get("sid"):
@@ -103,7 +103,7 @@ except ValueError:
 if _rp and os.environ.get("REX_REALITY", "1") != "0":
     if _rp in (8080, 8000, 8090, 2001, 2002, 2003, 2004, 2005, 2006, 2007) or not 1024 <= _rp <= 65535:
         print(f"[lock] TCP Proxy port {_rp} is already used inside -> set the TCP Proxy port to 2010 (Reality skipped)", flush=True)
-    elif ver >= (1, 8, 0) and marzban_knows("reality"):
+    elif ver >= (1, 8, 0) and core_knows("reality"):
         try:
             k = reality_keys(); sni = (os.environ.get("REX_REALITY_SNI") or "www.speedtest.net").strip()
             extra.append({"tag": REALITY_TAG, "listen": "0.0.0.0", "port": _rp, "protocol": "vless",

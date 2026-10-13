@@ -166,7 +166,7 @@ def change(body, _ip=None):
 
 # =====================================================================================================
 # 🤝 Reseller panels (پنل‌های نمایندگی)
-# A reseller is a normal (non-sudo) Marzban admin: same panel, same login page, sees ONLY its own users.
+# A reseller is a normal (non-sudo) core admin: same panel, same login page, sees ONLY its own users.
 # Limits are enforced here, in front of the panel API (nginx sends the few write calls through us):
 #   max_users  - how many users it may have            (0 = unlimited)
 #   quota      - total data it may sell, in bytes       (0 = unlimited)
@@ -175,7 +175,7 @@ def change(body, _ip=None):
 #   enabled    - off = cannot log in, sessions are closed at once
 # =====================================================================================================
 import os, shutil
-RS_FILE = "/var/lib/marzban/rex_resellers.json"
+RS_FILE = "/var/lib/sabirex/rex_resellers.json"
 rs_lock = threading.RLock()
 GB = 1073741824
 

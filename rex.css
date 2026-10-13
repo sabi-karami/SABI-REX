@@ -1,4 +1,4 @@
-/* SABI-REX skin for the Marzban dashboard
+/* SABI-REX skin for the core dashboard
    Safe by design: only polishes spacing, sizes, fonts and RTL. Never hides or moves panel features. */
 
 /* ---------- font (bundled in the image, works even if Google Fonts is blocked) ---------- */
@@ -91,11 +91,11 @@ td, .chakra-input, input, textarea, .chakra-code, code { unicode-bidi: plaintext
    SABI-REX · Obsidian Neon theme (dark aurora, glass, crimson + cyan)
    Colors only: layout / features of the panel are never touched.
    ===================================================================== */
-:root{
+:root:root, html:root, html.chakra-ui-dark, html.chakra-ui-light{
   --rx-r:#ff2e63; --rx-r2:#ff7a9c; --rx-c:#08d9d6; --rx-g:#ffd166;
-  --chakra-colors-primary-50:#fff0f4; --chakra-colors-primary-100:#ffd6e1; --chakra-colors-primary-200:#ffadc3;
-  --chakra-colors-primary-300:#ff7a9c; --chakra-colors-primary-400:#ff5480; --chakra-colors-primary-500:#ff2e63;
-  --chakra-colors-primary-600:#e0164c; --chakra-colors-primary-700:#b30d3b; --chakra-colors-primary-800:#80082a; --chakra-colors-primary-900:#4d0419;
+  --chakra-colors-primary-50:#fff0f4 !important; --chakra-colors-primary-100:#ffd6e1 !important; --chakra-colors-primary-200:#ffadc3 !important;
+  --chakra-colors-primary-300:#ff7a9c !important; --chakra-colors-primary-400:#ff5480 !important; --chakra-colors-primary-500:#ff2e63 !important;
+  --chakra-colors-primary-600:#e0164c !important; --chakra-colors-primary-700:#b30d3b !important; --chakra-colors-primary-800:#80082a !important; --chakra-colors-primary-900:#4d0419 !important;
 }
 .chakra-ui-dark, [data-theme=dark]{
   --chakra-colors-gray-900:#07060d; --chakra-colors-gray-800:#0e0c18; --chakra-colors-gray-750:#14111f; --chakra-colors-gray-700:#1b1729;
@@ -135,9 +135,20 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opa
 /* brand mark in the header */
 .rx-brand{display:inline-flex;align-items:center;gap:.5rem;font-weight:800;letter-spacing:.14em;direction:ltr;font-size:1.05rem;
   background:linear-gradient(90deg,#fff,var(--rx-r) 40%,var(--rx-g) 60%,var(--rx-c));background-size:220% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:rxsheen 6s linear infinite}
+.rx-brand svg{width:24px;height:24px}
 .rx-brand i{width:22px;height:22px;border-radius:7px;background:radial-gradient(circle at 30% 25%,var(--rx-r2),var(--rx-r) 50%,#7a0026);box-shadow:0 0 16px rgba(255,46,99,.6);display:inline-block}
 @keyframes rxsheen{to{background-position:-220% 0}}
 /* login screen */
 .rx-login-glow{position:fixed;inset:-20%;z-index:0;pointer-events:none;background:conic-gradient(from 0deg at 50% 50%,rgba(255,46,99,.12),transparent 25%,rgba(8,217,214,.10) 50%,transparent 75%,rgba(255,46,99,.12));animation:rxspin 30s linear infinite;filter:blur(40px)}
 @keyframes rxspin{to{transform:rotate(360deg)}}
 @media (prefers-reduced-motion:reduce){.rx-brand,.rx-login-glow{animation:none}}
+
+/* login hero */
+.rx-hero{display:flex;flex-direction:column;align-items:center;gap:10px;margin:0 auto 18px;text-align:center}
+.rx-hero svg{width:min(150px,38vw);height:auto;filter:drop-shadow(0 0 30px rgba(255,46,99,.55));animation:rxfloat 4s ease-in-out infinite}
+.rx-hero b{font-size:clamp(34px,8vw,56px);font-weight:900;letter-spacing:.14em;direction:ltr;line-height:1;
+  background:linear-gradient(90deg,#fff,#ff2e63 35%,#ffd166 55%,#08d9d6 80%,#fff);background-size:250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:rxsheen 5s linear infinite}
+.rx-hero small{letter-spacing:.5em;font-size:11px;color:#9b95c0;direction:ltr}
+.rx-hide{display:none !important}
+.rx-mini svg{width:26px;height:26px}
+@keyframes rxfloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}

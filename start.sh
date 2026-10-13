@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-echo "=== ⚡ SABI-REX | Marzban on Railway ==="
+echo "=== ⚡ SABI-REX on Railway ==="
 # ⚡ more open connections for nginx + Xray (many users / many tabs at once), never fatal
 ulimit -n 65535 2>/dev/null || ulimit -n "$(ulimit -Hn)" 2>/dev/null || true
 
@@ -10,8 +10,8 @@ unset SUDO_USERNAME SUDO_PASSWORD
 # internal wiring is forced too, so a wrong Railway variable can never break the panel
 export UVICORN_HOST=127.0.0.1
 export UVICORN_PORT=8000
-export XRAY_JSON=/var/lib/marzban/xray_config.json
-export SQLALCHEMY_DATABASE_URL=sqlite:////var/lib/marzban/db.sqlite3
+export XRAY_JSON=/var/lib/sabirex/xray_config.json
+export SQLALCHEMY_DATABASE_URL=sqlite:////var/lib/sabirex/db.sqlite3
 export JWT_ACCESS_TOKEN_EXPIRE_MINUTES="${JWT_ACCESS_TOKEN_EXPIRE_MINUTES:-1440}"
 # ⚡ our own subscription page (sub.html)
 export CUSTOM_TEMPLATES_DIRECTORY=/opt/rex/templates/
@@ -30,10 +30,10 @@ export USE_CUSTOM_JSON_FOR_V2RAYN="${USE_CUSTOM_JSON_FOR_V2RAYN:-False}"
 export USE_CUSTOM_JSON_FOR_STREISAND="${USE_CUSTOM_JSON_FOR_STREISAND:-False}"
 export USE_CUSTOM_JSON_FOR_HAPP="${USE_CUSTOM_JSON_FOR_HAPP:-False}"
 
-mkdir -p /var/lib/marzban /run/rex
+mkdir -p /var/lib/sabirex /run/rex
 # 🔐 secret config path /cdn/<random id> (SABI-REX style): made once, kept in the Volume = configs never change.
 #    REX_PATH_SECRET in Railway Variables sets your own id (8-64 letters / digits / -).
-JX_FILE=/var/lib/marzban/rex_path
+JX_FILE=/var/lib/sabirex/rex_path
 JX_ID="$(printf '%s' "${REX_PATH_SECRET:-}" | tr -cd 'A-Za-z0-9-')"
 if [ ${#JX_ID} -lt 8 ] || [ ${#JX_ID} -gt 64 ]; then
   [ -n "${REX_PATH_SECRET:-}" ] && echo "[start] WARNING: REX_PATH_SECRET must be 8-64 letters/digits/- -> ignored"
@@ -46,7 +46,7 @@ printf '%s' "$JX_ID" > "$JX_FILE.tmp" 2>/dev/null && mv -f "$JX_FILE.tmp" "$JX_F
 export REX_WS_BASE="/cdn/$JX_ID"
 # 🗝 SABI-REX secret entrance key: the panel only exists for browsers that opened /<key> once.
 #    REX_PANEL_KEY in Railway Variables sets your own (16-64 letters/digits), otherwise made once and kept in the Volume.
-RK_FILE=/var/lib/marzban/rex_panel_key
+RK_FILE=/var/lib/sabirex/rex_panel_key
 RK="$(printf '%s' "${REX_PANEL_KEY:-}" | tr -cd 'A-Za-z0-9')"
 if [ ${#RK} -lt 16 ] || [ ${#RK} -gt 64 ]; then
   [ -n "${REX_PANEL_KEY:-}" ] && echo "[start] WARNING: REX_PANEL_KEY must be 16-64 letters/digits -> ignored"
@@ -62,7 +62,7 @@ echo "[start] secret config path ready"
 if ! python /opt/lock.py; then
   # safety net: never a dead deploy because of the config builder -> last good config, else the plain repo config
   echo "[lock] WARNING: config builder failed -> using the last good Xray config"
-  [ -s /var/lib/marzban/xray_config.json ] || python - <<'PY' || cp /opt/xray_config.json /var/lib/marzban/xray_config.json
+  [ -s /var/lib/sabirex/xray_config.json ] || python - <<'PY' || cp /opt/xray_config.json /var/lib/sabirex/xray_config.json
 import json, os
 b = json.load(open("/opt/xray_config.json")); l = json.load(open("/opt/locked_inbound.json")); B = os.environ.get("REX_WS_BASE", "/cdn/rex")
 l["streamSettings"]["wsSettings"]["path"] = B
@@ -71,7 +71,7 @@ for i in b["inbounds"]:
     if isinstance(w, dict) and i.get("tag") in ("VLESS WS", "VMESS WS", "TROJAN WS"):
         w["path"] = B + {"VLESS WS": "/v", "VMESS WS": "/m", "TROJAN WS": "/t"}[i["tag"]]
 b["inbounds"].insert(0, l)
-json.dump(b, open("/var/lib/marzban/xray_config.json", "w"), ensure_ascii=False, indent=2)
+json.dump(b, open("/var/lib/sabirex/xray_config.json", "w"), ensure_ascii=False, indent=2)
 PY
 fi
 
@@ -80,9 +80,9 @@ if [ -z "$XRAY_SUBSCRIPTION_URL_PREFIX" ] && [ -n "$PUBLIC_DOMAIN" ]; then
   export XRAY_SUBSCRIPTION_URL_PREFIX="https://$PUBLIC_DOMAIN"
 fi
 echo "[start] domain: ${PUBLIC_DOMAIN:-NOT SET} | sub prefix: ${XRAY_SUBSCRIPTION_URL_PREFIX:-NOT SET}"
-[ -d /var/lib/marzban ] && touch /var/lib/marzban/.write-test && rm -f /var/lib/marzban/.write-test \
-  || echo "[start] WARNING: /var/lib/marzban not writable"
-mountpoint -q /var/lib/marzban 2>/dev/null || echo "[start] WARNING: no Volume on /var/lib/marzban, data will reset on redeploy"
+[ -d /var/lib/sabirex ] && touch /var/lib/sabirex/.write-test && rm -f /var/lib/sabirex/.write-test \
+  || echo "[start] WARNING: /var/lib/sabirex not writable"
+mountpoint -q /var/lib/sabirex 2>/dev/null || echo "[start] WARNING: no Volume on /var/lib/sabirex, data will reset on redeploy"
 # all 4 Railway regions work; EU West (Amsterdam) gives the lowest ping from Iran
 case "${RAILWAY_REPLICA_REGION:-}" in
   *europe*|"") echo "[start] region: ${RAILWAY_REPLICA_REGION:-unknown} (Amsterdam = best for Iran)";;
@@ -91,7 +91,7 @@ esac
 
 # panel always on 8080; if Railway injected another PORT, listen there too (healthcheck never misses)
 # nginx config rendered from the template with the secret path (every start, so it always matches Xray)
-sed -e "s#__JXB__#${REX_WS_BASE}#g" -e "s#__RXK__#${REX_PANEL_KEY}#g" /opt/rex/nginx.conf.tpl > /etc/nginx/conf.d/marzban.conf
+sed -e "s#__JXB__#${REX_WS_BASE}#g" -e "s#__RXK__#${REX_PANEL_KEY}#g" /opt/rex/nginx.conf.tpl > /etc/nginx/conf.d/sabirex.conf
 printf 'if ($cookie_rx_k != "%s") { return 404; }\n' "$REX_PANEL_KEY" > /etc/nginx/rex-key.inc
 if [ "${REX_OLD_PATHS:-0}" = "0" ]; then
   : > /etc/nginx/rex-old.inc
@@ -115,7 +115,7 @@ if ! nginx -t; then
   # safety net: never a dead deploy because of the web config -> plain panel on 8080 (skin/extras off until fixed)
   echo "[start] WARNING: nginx config failed the test -> emergency config (panel only)"
   # fail-closed: no panel, no limits bypass. Only the healthcheck + an honest 503 until the config is fixed.
-  cat > /etc/nginx/conf.d/marzban.conf <<'NGX'
+  cat > /etc/nginx/conf.d/sabirex.conf <<'NGX'
 server {
   listen 8080 reuseport;
   include /etc/nginx/rex-port.inc;
@@ -143,7 +143,7 @@ else
 fi
 
 cd /code
-FRESH=0; [ -s /var/lib/marzban/db.sqlite3 ] || FRESH=1
+FRESH=0; [ -s /var/lib/sabirex/db.sqlite3 ] || FRESH=1
 alembic upgrade head
 if ! python /opt/ensure_admin.py; then
   if [ "$FRESH" = "1" ]; then
@@ -186,7 +186,7 @@ PY
 
 python main.py &
 MAIN=$!
-echo "$MAIN" > /run/rex/marzban.pid
+echo "$MAIN" > /run/rex/core.pid
 trap 'kill -TERM $MAIN 2>/dev/null; wait $MAIN; exit 0' TERM INT
 
 # helpers restart themselves if they ever stop; the panel keeps running no matter what

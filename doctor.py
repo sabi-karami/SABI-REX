@@ -18,7 +18,7 @@ PORTS = {"nginx": 8080, "panel": 8000}
 WS_PATHS, HTTP_ONLY = {}, set()
 # watch exactly the inbounds that lock.py wrote (WS / HTTPUpgrade get a real handshake test, XHTTP a port test)
 try:
-    for ib in json.load(open("/var/lib/marzban/xray_config.json"))["inbounds"]:
+    for ib in json.load(open("/var/lib/sabirex/xray_config.json"))["inbounds"]:
         ss = ib.get("streamSettings", {}); net = ss.get("network")
         path = (ss.get("wsSettings") or ss.get("httpupgradeSettings") or ss.get("xhttpSettings") or ss.get("splithttpSettings") or {}).get("path")
         if ib.get("port") and path:
@@ -28,7 +28,7 @@ try:
 except Exception as e:
     print(f"[doctor] could not read xray config: {e}", flush=True)
     PORTS.update({"rex-inbound": 2004, "vless": 2001, "vmess": 2002, "trojan": 2003})
-    _b = "/cdn/" + (open("/var/lib/marzban/rex_path").read().strip() if os.path.exists("/var/lib/marzban/rex_path") else "rex")
+    _b = "/cdn/" + (open("/var/lib/sabirex/rex_path").read().strip() if os.path.exists("/var/lib/sabirex/rex_path") else "rex")
     WS_PATHS.update({"rex-inbound": _b, "vless": _b + "/v", "vmess": _b + "/m", "trojan": _b + "/t"})
 
 def log(msg):
@@ -109,12 +109,12 @@ def don_heal():
     except Exception as e:
         log(f"donation page restore failed: {e}")
 
-BK_DIR = "/var/lib/marzban/rex_backups"
+BK_DIR = "/var/lib/sabirex/rex_backups"
 
 def daily_backup():
     """online sqlite backup (safe while the panel is running) + agency data, keeps the newest 7"""
     import sqlite3, shutil
-    db = "/var/lib/marzban/db.sqlite3"
+    db = "/var/lib/sabirex/db.sqlite3"
     if not os.path.exists(db):
         return
     os.makedirs(BK_DIR, exist_ok=True)
@@ -126,7 +126,7 @@ def daily_backup():
     finally:
         dst.close(); src.close()
     os.replace(tmp, tmp[:-4])
-    for f in ("/var/lib/marzban/rex_resellers.json",):
+    for f in ("/var/lib/sabirex/rex_resellers.json",):
         if os.path.exists(f):
             shutil.copyfile(f, os.path.join(BK_DIR, f"agency-{stamp}.json"))
     for prefix in ("db-", "agency-"):
@@ -249,7 +249,7 @@ while True:
         if panel_fail >= 3:
             log("panel frozen -> restarting container")
             try:
-                os.kill(int(open("/run/rex/marzban.pid").read().strip()), signal.SIGKILL)
+                os.kill(int(open("/run/rex/core.pid").read().strip()), signal.SIGKILL)
             except Exception as e:
                 log(f"could not stop panel: {e}")
             panel_fail = 0

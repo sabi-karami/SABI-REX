@@ -27,7 +27,7 @@ def set_pw(a, password):
 RESELLERS = set()                                   # reseller panels are never promoted / reset
 STORE_BROKEN = False                                # reseller file exists but can't be read -> touch no roles at all
 _seen = False
-for _p in ("/var/lib/marzban/rex_resellers.json", "/var/lib/marzban/rex_resellers.json.bak"):
+for _p in ("/var/lib/sabirex/rex_resellers.json", "/var/lib/sabirex/rex_resellers.json.bak"):
     if not os.path.exists(_p):
         continue
     _seen = True

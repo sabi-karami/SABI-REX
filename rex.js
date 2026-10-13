@@ -77,7 +77,7 @@
   // Every time the panel opens one of ITS OWN dialogs (create user, hosts, core...), we remember the
   // exact theme classes it used. Our dialog then reuses those same classes, so it is rendered by the
   // panel's own theme engine: same colors, radius, shadow, fonts, spacing, dark/light mode.
-  // Before the panel has opened any dialog, a hand-tuned copy of the Marzban/Chakra theme is used.
+  // Before the panel has opened any dialog, a hand-tuned copy of the Chakra theme is used.
   // ---------------------------------------------------------------------------------------------
   var CAP_KEY = "rex-ui-cap-v1";
   function capLoad() { try { return JSON.parse(localStorage.getItem(CAP_KEY) || "{}") || {}; } catch (e) { return {}; } }
@@ -177,7 +177,7 @@
       "[role=menu] .rex-item::after{content:'';position:absolute;inset-inline-start:0;top:20%;bottom:20%;width:2px;border-radius:2px;background:linear-gradient(" + P + ",var(--chakra-colors-purple-400,#9f7aea));opacity:0;transition:opacity .2s}" +
       "[role=menu] .rex-item[data-focus]::after{opacity:1}" +
       "[role=menu] .rex-item{white-space:nowrap}" +
-      // twins of the Chakra/Marzban modal parts (used only until the panel's own classes are known)
+      // twins of the Chakra modal parts (used only until the panel's own classes are known)
       ".chakra-modal__overlay.jp-own{position:fixed;inset:0;z-index:var(--chakra-zIndices-modal,1400);background:var(--chakra-colors-blackAlpha-300,rgba(0,0,0,.16));backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}" +
       ".chakra-modal__content-container.jp-own{position:fixed;inset:0;z-index:var(--chakra-zIndices-modal,1400);display:flex;justify-content:center;align-items:flex-start;overflow:auto;overscroll-behavior-y:none}" +
       ".chakra-modal__content.jp-own{position:relative;display:flex;flex-direction:column;width:100%;outline:0;max-width:var(--chakra-sizes-sm,24rem);margin:3.75rem 1rem;" +
@@ -1433,7 +1433,7 @@
 
   // 💎 the panel's own «Donation / حمایت مالی» menu item opens our donation page (/donate/) (same tab, see openDonate).
   //    Capture phase: runs before React, keeps the panel's own onClick (the yellow dot still clears).
-  var DON_RE = /github\.com\/(gozargah\/marzban|sabirex)\/?#donation/i, DON_TXT = /^(donation|donate|حمایت مالی|حمایت|کمک مالی|دونیت|پشتیبانی مالی|捐赠|赞助|捐助|пожертвован|поддерж|донат)/i;
+  var DON_RE = /github\.com\/[\w-]+\/[\w-]+\/?#donation/i, DON_TXT = /^(donation|donate|حمایت مالی|حمایت|کمک مالی|دونیت|پشتیبانی مالی|捐赠|赞助|捐助|пожертвован|поддерж|донат)/i;
   function isDonate(el) {
     var a = el.closest && el.closest("a[href]");
     if (a && DON_RE.test(a.getAttribute("href") || "")) return a;
@@ -1463,7 +1463,7 @@
   function fixDonate() { var as = document.querySelectorAll('a[href*="#donation"]'); for (var i = 0; i < as.length; i++) if (DON_RE.test(as[i].getAttribute("href") || "")) { as[i].setAttribute("href", location.origin + "/donate/"); as[i].removeAttribute("target"); } }
 
   // 🔗 GitHub link of the panel -> SABI-REX GitHub (backup for nginx)
-  var GH = "#", GH_OLD = /^https?:\/\/(www\.)?github\.com\/gozargah(\/marzban)?\/?$/i;
+  var GH = "#", GH_OLD = /^https?:\/\/(www\.)?github\.com\/[\w-]+(\/[\w-]+)?\/?$/i;
   var ghShadowDone = false, ghLastScan = 0;
   function fixLinks() {
     var as = document.querySelectorAll('a[href*="github.com"]');
@@ -1725,21 +1725,36 @@
   try { fix(); } catch (e) {}
 })();
 
-/* ===== SABI-REX: title, brand mark, login aura (cosmetic only) ===== */
+/* ===== SABI-REX: brand, logo, scrub upstream credits (cosmetic only) ===== */
 (function(){
-  try{
-    var fix=function(){
+  var LOGO='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="SABI-REX"><defs><linearGradient id="rxg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff5a85"/><stop offset=".55" stop-color="#ff2e63"/><stop offset="1" stop-color="#7b1fa2"/></linearGradient><linearGradient id="rxc" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#08d9d6"/></linearGradient><filter id="rxs"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><path d="M64 6 114 35v58L64 122 14 93V35Z" fill="url(#rxg)"/><path d="M64 6 114 35v58L64 122 14 93V35Z" fill="none" stroke="#ffd166" stroke-opacity=".7" stroke-width="3"/><path d="M64 20 102 42v44L64 108 26 86V42Z" fill="#0b0914" fill-opacity=".55"/><g filter="url(#rxs)" stroke="url(#rxc)" stroke-width="9" stroke-linecap="round"><path d="M46 38 36 90"/><path d="M68 34 56 94"/><path d="M90 38 78 90"/></g><path d="M64 12l5 8h-10z" fill="#ffd166"/></svg>';
+  function fix(){
+    try{
       if(document.title!=="SABI-REX")document.title="SABI-REX";
+      var ms=document.querySelectorAll('meta[name="application-name"],meta[name="apple-mobile-web-app-title"]');for(var i=0;i<ms.length;i++)ms[i].setAttribute("content","SABI-REX");
+      var tc=document.querySelector('meta[name="theme-color"]');if(tc)tc.setAttribute("content","#07060d");
+      /* every upstream credit / GitHub link is hidden (footer, star button) */
+      var as=document.querySelectorAll('a[href*="github.com"]');
+      for(i=0;i<as.length;i++){var el=as[i],p=el.parentElement;(p&&p.children.length<=3&&p.textContent.length<90?p:el).classList.add("rx-hide");}
       var login=/#\/login/.test(location.hash)||!!document.querySelector('input[name="password"]');
       var g=document.querySelector(".rx-login-glow");
       if(login&&!g){g=document.createElement("div");g.className="rx-login-glow";document.body.appendChild(g);}
       if(!login&&g)g.remove();
-      if(!document.querySelector(".rx-brand")){
-        var hd=document.querySelector("header")||document.querySelector("form");
-        if(hd){var b=document.createElement("div");b.className="rx-brand";b.innerHTML="<i></i>SABI-REX";b.style.margin=login?"0 auto 18px":"0 0 6px";
-          if(login){hd.insertBefore(b,hd.firstChild);}else{hd.insertBefore(b,hd.firstChild);}}
+      var old=document.querySelector(".rx-brand");if(old)old.remove();
+      if(login&&!document.querySelector(".rx-hero")){
+        var h=document.querySelector(".chakra-heading");
+        if(h&&h.parentElement){
+          var box=h.parentElement,sv=box.querySelector("svg");if(sv&&!sv.closest(".rx-hero"))sv.classList.add("rx-hide");
+          var x=box.previousElementSibling;if(x&&x.tagName==="svg")x.classList.add("rx-hide");
+          var hero=document.createElement("div");hero.className="rx-hero";hero.innerHTML=LOGO+"<b>SABI-REX</b><small>SECURE PANEL</small>";
+          box.insertBefore(hero,box.firstChild);
+        }
       }
-    };
-    setInterval(fix,800);document.addEventListener("DOMContentLoaded",fix);
-  }catch(e){}
+      if(!login&&!document.querySelector(".rx-mini")){
+        var hd=document.querySelector("header");
+        if(hd){var m=document.createElement("div");m.className="rx-brand rx-mini";m.innerHTML=LOGO+"SABI-REX";hd.insertBefore(m,hd.firstChild);}
+      }
+    }catch(e){}
+  }
+  setInterval(fix,700);document.addEventListener("DOMContentLoaded",fix);
 })();

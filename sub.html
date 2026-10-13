@@ -602,13 +602,11 @@ function RexSerial(s) {
   s = String(s || "rex"); var h1 = 0x811c9dc5, h2 = 0x1505;
   for (var i = 0; i < s.length; i++) { var c = s.charCodeAt(i); h1 = Math.imul(h1 ^ c, 16777619) >>> 0; h2 = ((h2 << 5) + h2 + c) >>> 0; }
   var x = ("00000000" + h1.toString(16)).slice(-8).toUpperCase(), y = ("00000000" + h2.toString(16)).slice(-4).toUpperCase();
-  return "JX-" + x.slice(0, 4) + "-" + x.slice(4) + "-" + y;
+  return "RX-" + x.slice(0, 4) + "-" + x.slice(4) + "-" + y;
 }
 /* the REX sigil: J + lightning inside a hex, drawn with strokes */
 function RexSigil(cls) {
-  return '<svg class="' + cls + '" viewBox="0 0 64 64" fill="none" aria-hidden="true"><path class="sg-hex" d="M32 3 57 17.5v29L32 61 7 46.5v-29Z" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/>' +
-         '<path class="sg-j" d="M38 16v20.5a8.5 8.5 0 0 1-17 0" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/>' +
-         '<path class="sg-bolt" d="M33 24 27 33h6l-3 8" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  return '<svg class="' + cls + '" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="SABI-REX"><defs><linearGradient id="rxsg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff5a85"/><stop offset=".55" stop-color="#ff2e63"/><stop offset="1" stop-color="#7b1fa2"/></linearGradient><linearGradient id="rxsc" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#08d9d6"/></linearGradient><filter id="rxss"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><path d="M64 6 114 35v58L64 122 14 93V35Z" fill="url(#rxsg)"/><path d="M64 6 114 35v58L64 122 14 93V35Z" fill="none" stroke="#ffd166" stroke-opacity=".7" stroke-width="3"/><path d="M64 20 102 42v44L64 108 26 86V42Z" fill="#0b0914" fill-opacity=".55"/><g filter="url(#rxss)" stroke="url(#rxsc)" stroke-width="9" stroke-linecap="round"><path d="M46 38 36 90"/><path d="M68 34 56 94"/><path d="M90 38 78 90"/></g><path d="M64 12l5 8h-10z" fill="#ffd166"/></svg>';
 }
 
 function RexApps(m, tab, fa) {

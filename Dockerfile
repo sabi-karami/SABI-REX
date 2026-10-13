@@ -1,4 +1,6 @@
-FROM gozargah/marzban:latest
+# core image comes from the CORE_IMAGE variable (Railway Variables)
+ARG CORE_IMAGE
+FROM ${CORE_IMAGE}
 
 RUN apt-get update \
  && apt-get install -y --no-install-recommends nginx curl ca-certificates procps \
@@ -14,10 +16,10 @@ RUN ( curl -fsSL --retry 3 --retry-delay 2 -o /usr/local/bin/cloudflared https:/
 
 COPY ws.inc /etc/nginx/ws.inc
 COPY gate.inc /etc/nginx/gate.inc
-COPY nginx.conf /etc/nginx/conf.d/marzban.conf
+COPY nginx.conf /etc/nginx/conf.d/sabirex.conf
 COPY nginx.conf /opt/rex/nginx.conf.tpl
 COPY xray_config.json locked_inbound.json lock.py enforce_hosts.py ensure_admin.py doctor.py rex_api.py /opt/
-COPY rex.css rex.js donate.html donate-config.js entrance.html decoy.html notfound.html /opt/rex/
+COPY rex.css rex.js donate.html donate-config.js entrance.html decoy.html notfound.html logo.svg /opt/rex/
 COPY sub.html /opt/rex/templates/subscription/index.html
 COPY sub.html /opt/rex/sub.golden.html
 COPY donate.html /opt/rex/donate.golden.html
@@ -36,14 +38,14 @@ RUN mkdir -p /opt/rex/fonts \
 COPY start.sh /start.sh
 
 # fix Windows line endings, just in case
-RUN sed -i 's/\r$//' /start.sh /opt/*.py /opt/*.json /opt/rex/rex.css /opt/rex/rex.js /opt/rex/donate.html /opt/rex/donate-config.js /opt/rex/templates/subscription/index.html /opt/rex/sub.golden.html /opt/rex/donate.golden.html /opt/rex/donate-config.golden.js /opt/rex/entrance.html /opt/rex/decoy.html /opt/rex/notfound.html /etc/nginx/ws.inc /etc/nginx/gate.inc /etc/nginx/conf.d/marzban.conf /opt/rex/nginx.conf.tpl \
+RUN sed -i 's/\r$//' /start.sh /opt/*.py /opt/*.json /opt/rex/rex.css /opt/rex/rex.js /opt/rex/donate.html /opt/rex/donate-config.js /opt/rex/templates/subscription/index.html /opt/rex/sub.golden.html /opt/rex/donate.golden.html /opt/rex/donate-config.golden.js /opt/rex/entrance.html /opt/rex/decoy.html /opt/rex/notfound.html /etc/nginx/ws.inc /etc/nginx/gate.inc /etc/nginx/conf.d/sabirex.conf /opt/rex/nginx.conf.tpl \
  && chmod +x /start.sh && chmod -R a+rX /opt/rex
 
 ENV PORT=8080 \
     UVICORN_HOST=127.0.0.1 \
     UVICORN_PORT=8000 \
-    XRAY_JSON=/var/lib/marzban/xray_config.json \
-    SQLALCHEMY_DATABASE_URL=sqlite:////var/lib/marzban/db.sqlite3 \
+    XRAY_JSON=/var/lib/sabirex/xray_config.json \
+    SQLALCHEMY_DATABASE_URL=sqlite:////var/lib/sabirex/db.sqlite3 \
     JWT_ACCESS_TOKEN_EXPIRE_MINUTES=1440 \
     CUSTOM_TEMPLATES_DIRECTORY=/opt/rex/templates/ \
     SUBSCRIPTION_PAGE_TEMPLATE=subscription/index.html

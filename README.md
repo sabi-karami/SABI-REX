@@ -2,7 +2,7 @@
 
 # ⬢ SABI-REX
 
-**پنل اختصاصی مبتنی بر Marzban روی Railway — تیره، شیشه‌ای، نئونی و مخفی**
+**پنل اختصاصی SABI-REX روی Railway — تیره، شیشه‌ای، نئونی و مخفی**
 
 </div>
 
@@ -19,9 +19,9 @@
 #### نصب روی Railway
 1. این ریپو را Fork کنید و در Railway گزینه‌ی **Deploy from GitHub repo** را بزنید.
 2. Region را روی **EU West (Amsterdam)** بگذارید.
-3. یک Volume با مسیر `/var/lib/marzban` اضافه کنید.
+3. یک Volume با مسیر `/var/lib/sabirex` اضافه کنید.
 4. یک دامنه با پورت `8080` بسازید.
-5. متغیرهای `REX_PANEL_KEY`، `REX_INIT_PASSWORD` و (در صورت داشتن دامنه‌ی شخصی) `PANEL_DOMAIN` را تنظیم کنید.
+5. متغیر `CORE_IMAGE` (تصویر هسته) و متغیرهای `REX_PANEL_KEY`، `REX_INIT_PASSWORD` و (در صورت داشتن دامنه‌ی شخصی) `PANEL_DOMAIN` را تنظیم کنید.
 6. Deploy کنید و پنل را از `https://DOMAIN/<REX_PANEL_KEY>` باز کنید.
 
 ورود نماینده‌ها: `https://DOMAIN/<REX_PANEL_KEY>/agent`
@@ -30,4 +30,4 @@
 همه‌ی متغیرها در [`variables.env`](variables.env) آمده‌اند. متغیرهای پیشرفته با پیشوند `REX_` شروع می‌شوند.
 
 #### مجوز
-بر پایه‌ی [Marzban](https://github.com/Gozargah/Marzban) (AGPL-3.0) و Xray-core.
+بر پایه‌ی نرم‌افزار متن‌باز با مجوز AGPL-3.0 و Xray-core.
