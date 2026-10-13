@@ -1727,34 +1727,36 @@
 
 /* ===== SABI-REX: brand, logo, scrub upstream credits (cosmetic only) ===== */
 (function(){
-  var LOGO='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="SABI-REX"><defs><linearGradient id="rxg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff5a85"/><stop offset=".55" stop-color="#ff2e63"/><stop offset="1" stop-color="#7b1fa2"/></linearGradient><linearGradient id="rxc" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#08d9d6"/></linearGradient><filter id="rxs"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><path d="M64 6 114 35v58L64 122 14 93V35Z" fill="url(#rxg)"/><path d="M64 6 114 35v58L64 122 14 93V35Z" fill="none" stroke="#ffd166" stroke-opacity=".7" stroke-width="3"/><path d="M64 20 102 42v44L64 108 26 86V42Z" fill="#0b0914" fill-opacity=".55"/><g filter="url(#rxs)" stroke="url(#rxc)" stroke-width="9" stroke-linecap="round"><path d="M46 38 36 90"/><path d="M68 34 56 94"/><path d="M90 38 78 90"/></g><path d="M64 12l5 8h-10z" fill="#ffd166"/></svg>';
+  var LOGO='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="SABI-REX"><defs><linearGradient id="rxA" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff6b8b"/><stop offset=".5" stop-color="#ff2e63"/><stop offset="1" stop-color="#8a1fd1"/></linearGradient><linearGradient id="rxB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7ffcf9"/><stop offset="1" stop-color="#08a9d9"/></linearGradient><linearGradient id="rxG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe3a3"/><stop offset="1" stop-color="#e0a93a"/></linearGradient><radialGradient id="rxH" cx=".5" cy=".42" r=".6"><stop offset="0" stop-color="#2a1340"/><stop offset="1" stop-color="#07050d"/></radialGradient></defs><path d="M64 4 116 26 108 92 64 124 20 92 12 26Z" fill="url(#rxH)"/><path d="M64 4 116 26 108 92 64 124 20 92 12 26Z" fill="none" stroke="url(#rxA)" stroke-width="4" stroke-linejoin="round"/><path d="M64 14 106 32 99 88 64 113 29 88 22 32Z" fill="none" stroke="#ffffff" stroke-opacity=".08" stroke-width="1.5"/><path d="M34 34 64 50 94 34 86 62 64 74 42 62Z" fill="url(#rxA)"/><path d="M42 62 64 74 86 62 78 86 64 100 50 86Z" fill="#ff2e63" fill-opacity=".35"/><path d="M50 52 58 58 50 60Z" fill="url(#rxB)"/><path d="M78 52 70 58 78 60Z" fill="url(#rxB)"/><path d="M54 76 58 90 62 77Z" fill="url(#rxG)"/><path d="M74 76 70 90 66 77Z" fill="url(#rxG)"/><path d="M64 20 70 30 64 36 58 30Z" fill="url(#rxG)"/><path d="M34 34 44 20 50 40Z M94 34 84 20 78 40Z" fill="url(#rxB)" fill-opacity=".9"/></svg>';
+  function hide(e){ if(e && !e.classList.contains("rx-hide")) e.classList.add("rx-hide"); }
   function fix(){
     try{
       if(document.title!=="SABI-REX")document.title="SABI-REX";
-      var ms=document.querySelectorAll('meta[name="application-name"],meta[name="apple-mobile-web-app-title"]');for(var i=0;i<ms.length;i++)ms[i].setAttribute("content","SABI-REX");
-      var tc=document.querySelector('meta[name="theme-color"]');if(tc)tc.setAttribute("content","#07060d");
-      /* every upstream credit / GitHub link is hidden (footer, star button) */
-      var as=document.querySelectorAll('a[href*="github.com"]');
-      for(i=0;i<as.length;i++){var el=as[i],p=el.parentElement;(p&&p.children.length<=3&&p.textContent.length<90?p:el).classList.add("rx-hide");}
-      var login=/#\/login/.test(location.hash)||!!document.querySelector('input[name="password"]');
+      var tc=document.querySelector('meta[name="theme-color"]');if(tc&&tc.content!=="#07060d")tc.setAttribute("content","#07060d");
+      /* upstream credit line ("..., Made with ... in ...") and its GitHub star button */
+      var ps=document.querySelectorAll("p.chakra-text");
+      for(var i=0;i<ps.length;i++){ if(/Made with/i.test(ps[i].textContent)) hide(ps[i].parentElement&&ps[i].parentElement.children.length===1?ps[i].parentElement:ps[i]); }
+      var gh=document.querySelectorAll('a.github-button,iframe[src*="buttons.github.io"],a[aria-label*="GitHub"],a[href*="github.com"]');
+      for(i=0;i<gh.length;i++) hide(gh[i].closest("span")||gh[i]);
+      var form=document.querySelector("form");
+      var login=!!(form&&form.querySelector('input[name="password"]'))&&!document.querySelector("header");
       var g=document.querySelector(".rx-login-glow");
       if(login&&!g){g=document.createElement("div");g.className="rx-login-glow";document.body.appendChild(g);}
       if(!login&&g)g.remove();
-      var old=document.querySelector(".rx-brand");if(old)old.remove();
-      if(login&&!document.querySelector(".rx-hero")){
-        var h=document.querySelector(".chakra-heading");
-        if(h&&h.parentElement){
-          var box=h.parentElement,sv=box.querySelector("svg");if(sv&&!sv.closest(".rx-hero"))sv.classList.add("rx-hide");
-          var x=box.previousElementSibling;if(x&&x.tagName==="svg")x.classList.add("rx-hide");
-          var hero=document.createElement("div");hero.className="rx-hero";hero.innerHTML=LOGO+"<b>SABI-REX</b><small>SECURE PANEL</small>";
-          box.insertBefore(hero,box.firstChild);
+      if(login){
+        var stack=form.parentElement&&form.parentElement.previousElementSibling;
+        var head=stack&&stack.querySelector("svg")?stack:null;
+        if(head&&!head.querySelector(".rx-hero")){
+          var sv=head.querySelector(":scope > svg");hide(sv);
+          var hero=document.createElement("div");hero.className="rx-hero";
+          hero.innerHTML='<div class="rx-orb"><i></i><i></i>'+LOGO+'</div><b>SABI-REX</b><small>SECURE&nbsp;PANEL</small>';
+          head.insertBefore(hero,head.firstChild);
         }
       }
-      if(!login&&!document.querySelector(".rx-mini")){
-        var hd=document.querySelector("header");
-        if(hd){var m=document.createElement("div");m.className="rx-brand rx-mini";m.innerHTML=LOGO+"SABI-REX";hd.insertBefore(m,hd.firstChild);}
-      }
+      var hd=document.querySelector("header");
+      if(hd&&!hd.querySelector(".rx-mini")){var m=document.createElement("div");m.className="rx-brand rx-mini";m.innerHTML=LOGO+"<span>SABI-REX</span>";hd.insertBefore(m,hd.firstChild);}
     }catch(e){}
   }
-  setInterval(fix,700);document.addEventListener("DOMContentLoaded",fix);
+  new MutationObserver(fix).observe(document.documentElement,{childList:true,subtree:true});
+  document.addEventListener("DOMContentLoaded",fix);setInterval(fix,1500);
 })();

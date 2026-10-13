@@ -144,11 +144,23 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opa
 @media (prefers-reduced-motion:reduce){.rx-brand,.rx-login-glow{animation:none}}
 
 /* login hero */
-.rx-hero{display:flex;flex-direction:column;align-items:center;gap:10px;margin:0 auto 18px;text-align:center}
-.rx-hero svg{width:min(150px,38vw);height:auto;filter:drop-shadow(0 0 30px rgba(255,46,99,.55));animation:rxfloat 4s ease-in-out infinite}
-.rx-hero b{font-size:clamp(34px,8vw,56px);font-weight:900;letter-spacing:.14em;direction:ltr;line-height:1;
-  background:linear-gradient(90deg,#fff,#ff2e63 35%,#ffd166 55%,#08d9d6 80%,#fff);background-size:250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:rxsheen 5s linear infinite}
-.rx-hero small{letter-spacing:.5em;font-size:11px;color:#9b95c0;direction:ltr}
+.rx-hero{display:flex;flex-direction:column;align-items:center;gap:12px;margin:0 auto 22px;text-align:center}
+.rx-orb{position:relative;width:170px;height:170px;display:grid;place-items:center}
+.rx-orb>svg{width:122px;height:122px;filter:drop-shadow(0 0 26px rgba(255,46,99,.6));animation:rxfloat 4s ease-in-out infinite;position:relative;z-index:1}
+.rx-orb i{position:absolute;inset:0;border-radius:50%;border:2px dashed rgba(255,46,99,.55);animation:rxspin 18s linear infinite}
+.rx-orb i+i{inset:16px;border:2px solid transparent;border-top-color:#08d9d6;border-bottom-color:#ffd166;animation-duration:6s;animation-direction:reverse}
+.rx-hero b{font-size:clamp(38px,8vw,60px);font-weight:900;letter-spacing:.14em;direction:ltr;line-height:1;
+  background:linear-gradient(90deg,#fff,#ff2e63 30%,#ffd166 50%,#08d9d6 75%,#fff);background-size:250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:rxsheen 5s linear infinite}
+.rx-hero small{letter-spacing:.55em;font-size:11px;color:#9b95c0;direction:ltr}
 .rx-hide{display:none !important}
-.rx-mini svg{width:26px;height:26px}
+.rx-mini{margin-inline-end:12px}
+.rx-mini svg{width:30px;height:30px;-webkit-text-fill-color:initial}
+.rx-mini span{background:inherit;-webkit-background-clip:text;background-clip:text}
 @keyframes rxfloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+/* buttons: solid crimson in both themes (dark mode used a pale pink before) */
+.chakra-ui-dark .chakra-button.css-0, button[type=submit].chakra-button{
+  background:linear-gradient(135deg,#ff2e63,#c2185b 55%,#8e24aa) !important;color:#fff !important;border:0 !important;
+  box-shadow:0 8px 24px rgba(255,46,99,.35),inset 0 1px 0 rgba(255,255,255,.25) !important}
+.chakra-ui-dark .chakra-button[class*="css-"]:not(.chakra-menu__menu-button):not([aria-label]){--chakra-colors-primary-200:#ff2e63;--chakra-colors-primary-300:#ff5480}
+.chakra-ui-dark{--chakra-colors-primary-200:#ff2e63 !important;--chakra-colors-primary-300:#ff5480 !important;--chakra-colors-primary-100:#ff7a9c !important}
+.chakra-ui-dark input.chakra-input{background:rgba(255,255,255,.035) !important;border-color:rgba(255,255,255,.1) !important}

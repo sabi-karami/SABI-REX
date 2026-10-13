@@ -333,9 +333,28 @@ html.jx-sw *,html.jx-sw *::before,html.jx-sw *::after{transition:none!important}
 ::view-transition-old(root),::view-transition-new(root){animation:none;mix-blend-mode:normal}
 ::view-transition-new(root){z-index:2}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.rise{opacity:1;transform:none}.intro{display:none}}
+
+/* ================= SABI-REX v4 polish ================= */
+.wm{width:240px!important;height:240px!important;inset-inline-end:-60px!important;top:-40px!important;opacity:.14;filter:saturate(.7) blur(.3px);color:inherit!important}
+.pass{isolation:isolate}
+.pass::after{content:"";position:absolute;inset:-1px;border-radius:inherit;padding:1.5px;z-index:3;pointer-events:none;
+  background:conic-gradient(from var(--rxa,0deg),transparent 0 60%,#ff2e63 72%,#ffd166 80%,#08d9d6 88%,transparent 96%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;animation:rxring 6s linear infinite}
+@property --rxa{syntax:"<angle>";initial-value:0deg;inherits:false}
+@keyframes rxring{to{--rxa:360deg}}
+.pass .uname{background:linear-gradient(90deg,#fff,#ffd1dc 40%,#ffffff 60%,#bff8f6);background-size:220% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:rxsh 6s linear infinite}
+@keyframes rxsh{to{background-position:-220% 0}}
+.brand .mark{filter:drop-shadow(0 0 12px rgba(255,46,99,.55));animation:rxbob 4s ease-in-out infinite}
+@keyframes rxbob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+.rx-scan{position:fixed;inset:0;pointer-events:none;z-index:0;background:repeating-linear-gradient(0deg,rgba(255,255,255,.018) 0 1px,transparent 1px 3px);mix-blend-mode:overlay}
+.rx-beam{position:fixed;left:0;right:0;height:140px;top:-140px;pointer-events:none;z-index:0;background:linear-gradient(180deg,transparent,rgba(255,46,99,.06),transparent);animation:rxbeam 9s linear infinite}
+@keyframes rxbeam{to{transform:translateY(calc(100vh + 280px))}}
+.row.cfg,.row.app{transition:transform .25s var(--e),box-shadow .25s,border-color .25s}
+.row.cfg:hover,.row.app:hover{transform:translateY(-2px);border-color:rgba(255,46,99,.35)!important;box-shadow:0 10px 30px rgba(255,46,99,.12)}
+@media (prefers-reduced-motion:reduce){.pass::after,.rx-beam,.brand .mark,.pass .uname{animation:none}}
 </style>
 </head>
-<body>
+<body><div class="rx-scan" aria-hidden="true"></div><div class="rx-beam" aria-hidden="true"></div>
 <div class="amb" aria-hidden="true"><span class="neb"></span><i class="a1"></i><i class="a2"></i><i class="a3"></i><i class="a4"></i><span class="floor"></span><span class="dust"></span><span class="gr"></span></div>
 <div class="intro" id="jx-intro" aria-hidden="true"><svg class="ig" viewBox="0 0 64 64" fill="none"><path class="sg-hex" d="M32 3 57 17.5v29L32 61 7 46.5v-29Z" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path class="sg-j" d="M38 16v20.5a8.5 8.5 0 0 1-17 0" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/><path class="sg-bolt" d="M33 24 27 33h6l-3 8" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><p>SABI-REX</p></div>
 <script>try{if(sessionStorage.getItem("jx-seen"))document.documentElement.classList.add("seen");sessionStorage.setItem("jx-seen","1")}catch(e){}</script>
@@ -606,7 +625,7 @@ function RexSerial(s) {
 }
 /* the REX sigil: J + lightning inside a hex, drawn with strokes */
 function RexSigil(cls) {
-  return '<svg class="' + cls + '" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="SABI-REX"><defs><linearGradient id="rxsg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff5a85"/><stop offset=".55" stop-color="#ff2e63"/><stop offset="1" stop-color="#7b1fa2"/></linearGradient><linearGradient id="rxsc" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#08d9d6"/></linearGradient><filter id="rxss"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><path d="M64 6 114 35v58L64 122 14 93V35Z" fill="url(#rxsg)"/><path d="M64 6 114 35v58L64 122 14 93V35Z" fill="none" stroke="#ffd166" stroke-opacity=".7" stroke-width="3"/><path d="M64 20 102 42v44L64 108 26 86V42Z" fill="#0b0914" fill-opacity=".55"/><g filter="url(#rxss)" stroke="url(#rxsc)" stroke-width="9" stroke-linecap="round"><path d="M46 38 36 90"/><path d="M68 34 56 94"/><path d="M90 38 78 90"/></g><path d="M64 12l5 8h-10z" fill="#ffd166"/></svg>';
+  return '<svg class="' + cls + '" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="SABI-REX"><defs><linearGradient id="rxsA" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff6b8b"/><stop offset=".5" stop-color="#ff2e63"/><stop offset="1" stop-color="#8a1fd1"/></linearGradient><linearGradient id="rxsB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7ffcf9"/><stop offset="1" stop-color="#08a9d9"/></linearGradient><linearGradient id="rxsG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe3a3"/><stop offset="1" stop-color="#e0a93a"/></linearGradient><radialGradient id="rxsH" cx=".5" cy=".42" r=".6"><stop offset="0" stop-color="#2a1340"/><stop offset="1" stop-color="#07050d"/></radialGradient></defs><path d="M64 4 116 26 108 92 64 124 20 92 12 26Z" fill="url(#rxsH)"/><path d="M64 4 116 26 108 92 64 124 20 92 12 26Z" fill="none" stroke="url(#rxsA)" stroke-width="4" stroke-linejoin="round"/><path d="M64 14 106 32 99 88 64 113 29 88 22 32Z" fill="none" stroke="#ffffff" stroke-opacity=".08" stroke-width="1.5"/><path d="M34 34 64 50 94 34 86 62 64 74 42 62Z" fill="url(#rxsA)"/><path d="M42 62 64 74 86 62 78 86 64 100 50 86Z" fill="#ff2e63" fill-opacity=".35"/><path d="M50 52 58 58 50 60Z" fill="url(#rxsB)"/><path d="M78 52 70 58 78 60Z" fill="url(#rxsB)"/><path d="M54 76 58 90 62 77Z" fill="url(#rxsG)"/><path d="M74 76 70 90 66 77Z" fill="url(#rxsG)"/><path d="M64 20 70 30 64 36 58 30Z" fill="url(#rxsG)"/><path d="M34 34 44 20 50 40Z M94 34 84 20 78 40Z" fill="url(#rxsB)" fill-opacity=".9"/></svg>';
 }
 
 function RexApps(m, tab, fa) {
