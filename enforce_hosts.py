@@ -139,9 +139,9 @@ def wanted(tag):
         out.append(base(path, address=CF_HOST, sni=CF_HOST, alpn=alpn, remark=n(R_CDN)))  # ☁️ Cloudflare by hostname
     if HAS_RAILWAY_DOMAIN:
         out.extend(direct(tag, path))                               # ⚡ straight to Railway: the 12 methods
-        if tag in tunnel_tags():
+        if (tag in tunnel_tags() or tag in ("VLESS WS", "TROJAN WS")) and tag not in ("VLESS HTTPUPGRADE", "VLESS XHTTP", "VLESS XHTTP SU"):   # CDN workers carry WebSocket only
             for k, d in enumerate(MIRRORS):                        # 🌐 same server, other domain names
-                out.append(base(path, address=d, sni=d, alpn=alpn, mux=True, remark=n(f"🌐 Mirror {k + 1}")))
+                out.append(base(path, address=d, sni=d, alpn=alpn, mux=True, remark=n(f"☁️ CDN Shield{'' if len(MIRRORS) == 1 else f' {k + 1}'}")))
     return out
 
 def tunnel_tags():
