@@ -1,0 +1,143 @@
+/* SABI-REX skin for the Marzban dashboard
+   Safe by design: only polishes spacing, sizes, fonts and RTL. Never hides or moves panel features. */
+
+/* ---------- font (bundled in the image, works even if Google Fonts is blocked) ---------- */
+@font-face { font-family: "Vazirmatn"; src: url("/rex-fonts/Vazirmatn-Regular.woff2") format("woff2"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Vazirmatn"; src: url("/rex-fonts/Vazirmatn-Medium.woff2") format("woff2"); font-weight: 500; font-display: swap; }
+@font-face { font-family: "Vazirmatn"; src: url("/rex-fonts/Vazirmatn-Bold.woff2") format("woff2"); font-weight: 700; font-display: swap; }
+:root {
+  --chakra-fonts-body: "Vazirmatn", Tahoma, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --chakra-fonts-heading: "Vazirmatn", Tahoma, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+body { font-family: var(--chakra-fonts-body); }
+
+/* ---------- global ---------- */
+html { overflow-x: hidden; -webkit-text-size-adjust: 100%; }
+body { overflow-x: clip; -webkit-text-size-adjust: 100%; }   /* clip (not hidden): keeps the sticky header and the «حمایت مالی» button pinned at the top */
+* { -webkit-tap-highlight-color: transparent; }
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb { background: #7c5cff88; border-radius: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::selection { background: #7c5cff55; }
+
+/* wide tables scroll sideways instead of breaking the page */
+.chakra-table__container { max-width: 100%; overflow-x: auto !important; -webkit-overflow-scrolling: touch; }
+th, .chakra-badge { white-space: nowrap; }
+
+/* long values (sub links, UUIDs, tokens) never overflow */
+.chakra-code, code, pre { word-break: break-all; white-space: pre-wrap; }
+
+/* mixed Persian + English/numbers always read correctly ("10 GB / 50 GB", links, usernames) */
+td, .chakra-input, input, textarea, .chakra-code, code { unicode-bidi: plaintext; }
+
+/* menus / popovers / toasts stay on screen */
+.chakra-menu__menu-list, .chakra-popover__content { max-width: 92vw !important; max-height: 70vh; overflow-y: auto; }
+.chakra-toast { max-width: 92vw; }
+
+/* soft polish */
+.chakra-modal__content, .chakra-card, .chakra-menu__menu-list { border-radius: 16px !important; }
+.chakra-button { border-radius: 10px !important; }
+
+/* desktop */
+@media (min-width: 1024px) {
+  .chakra-container { max-width: 1280px !important; }
+}
+
+/* ---------- RTL (Persian) fixes: only applied when the panel itself is in RTL ---------- */
+[dir="rtl"] .chakra-modal__close-btn { right: auto !important; left: 12px !important; }
+[dir="rtl"] .chakra-select__icon-wrapper { right: auto !important; left: 0.5rem !important; }
+[dir="rtl"] .chakra-select { padding-inline-start: 1rem !important; padding-inline-end: 2rem !important; }
+[dir="rtl"] .chakra-menu__icon-wrapper { margin-inline-start: 0 !important; margin-inline-end: 0.75rem !important; }
+[dir="rtl"] input, [dir="rtl"] textarea { text-align: start; }
+
+/* ---------- tablet & mobile ---------- */
+@media (max-width: 768px) {
+  .chakra-container { padding-left: 12px !important; padding-right: 12px !important; max-width: 100% !important; }
+
+  header, .chakra-button__group { flex-wrap: wrap !important; gap: 8px; }
+  h1, h2, .chakra-heading { font-size: clamp(16px, 5vw, 22px) !important; line-height: 1.5 !important; }
+
+  /* 16px inputs = iPhone never auto-zooms; taller = easy to tap */
+  input:not([type=checkbox]):not([type=radio]):not([type=hidden]):not([type=range]),
+  select, textarea, .chakra-input, .chakra-select, .chakra-textarea { font-size: 16px !important; min-height: 42px; }
+
+  .chakra-button { min-height: 40px; }
+  .chakra-icon-button { min-width: 40px; min-height: 40px; }
+
+  /* modals: full width card, page scrolls naturally (date pickers & dropdowns never get clipped) */
+  .chakra-modal__content-container { align-items: flex-start !important; }
+  .chakra-modal__content { width: calc(100vw - 16px) !important; max-width: calc(100vw - 16px) !important;
+                           margin: 8px auto !important; }
+  .chakra-modal__header { font-size: 18px !important; padding-inline-end: 48px !important; }
+  .chakra-modal__body { padding-left: 14px !important; padding-right: 14px !important; }
+  .chakra-modal__footer { flex-wrap: wrap; gap: 8px; }
+  .chakra-modal__footer .chakra-button { flex: 1 1 auto; }
+
+  .chakra-form-control { width: 100% !important; }
+  th, td { padding: 10px 8px !important; font-size: 13px !important; }
+  .chakra-tabs__tablist { overflow-x: auto; flex-wrap: nowrap !important; }
+  .chakra-modal__body canvas { max-width: 78vw !important; height: auto !important; }
+  .chakra-menu__menu-list { min-width: 200px !important; }
+}
+
+/* ---------- small phones ---------- */
+@media (max-width: 400px) {
+  th, td { font-size: 12px !important; padding: 8px 6px !important; }
+  .chakra-badge { font-size: 10px !important; }
+}
+
+
+/* =====================================================================
+   SABI-REX · Obsidian Neon theme (dark aurora, glass, crimson + cyan)
+   Colors only: layout / features of the panel are never touched.
+   ===================================================================== */
+:root{
+  --rx-r:#ff2e63; --rx-r2:#ff7a9c; --rx-c:#08d9d6; --rx-g:#ffd166;
+  --chakra-colors-primary-50:#fff0f4; --chakra-colors-primary-100:#ffd6e1; --chakra-colors-primary-200:#ffadc3;
+  --chakra-colors-primary-300:#ff7a9c; --chakra-colors-primary-400:#ff5480; --chakra-colors-primary-500:#ff2e63;
+  --chakra-colors-primary-600:#e0164c; --chakra-colors-primary-700:#b30d3b; --chakra-colors-primary-800:#80082a; --chakra-colors-primary-900:#4d0419;
+}
+.chakra-ui-dark, [data-theme=dark]{
+  --chakra-colors-gray-900:#07060d; --chakra-colors-gray-800:#0e0c18; --chakra-colors-gray-750:#14111f; --chakra-colors-gray-700:#1b1729;
+  --chakra-colors-gray-600:#2a2540; --chakra-colors-chakra-body-bg:#07060d;
+}
+body{
+  background:
+    radial-gradient(1200px 700px at 110% -10%, rgba(255,46,99,.16), transparent 60%),
+    radial-gradient(900px 600px at -10% 110%, rgba(8,217,214,.12), transparent 60%),
+    radial-gradient(700px 500px at 50% 50%, rgba(255,209,102,.04), transparent 70%) !important;
+  background-attachment:fixed !important;
+}
+.chakra-ui-dark body, body.chakra-ui-dark{ background-color:#07060d !important; }
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.35;
+  background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
+  background-size:44px 44px;-webkit-mask-image:radial-gradient(ellipse at 50% 0%,#000 10%,transparent 70%);mask-image:radial-gradient(ellipse at 50% 0%,#000 10%,transparent 70%)}
+#root{position:relative;z-index:1}
+.chakra-ui-dark .chakra-card, .chakra-ui-dark .chakra-modal__content, .chakra-ui-dark .chakra-menu__menu-list,
+.chakra-ui-dark .chakra-popover__content, .chakra-ui-dark .chakra-table__container{
+  background:linear-gradient(160deg,rgba(28,22,44,.72),rgba(12,10,22,.78)) !important;
+  -webkit-backdrop-filter:blur(14px) saturate(140%);backdrop-filter:blur(14px) saturate(140%);
+  border:1px solid rgba(255,255,255,.07) !important;box-shadow:0 10px 40px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.05) !important}
+.chakra-ui-light .chakra-card, .chakra-ui-light .chakra-modal__content{box-shadow:0 10px 30px rgba(80,20,40,.10) !important;border:1px solid rgba(255,46,99,.12) !important}
+.chakra-button[class*="primary"], .chakra-button[data-variant="solid"]{
+  background-image:linear-gradient(135deg,var(--rx-r),#c2185b 55%,#8e24aa) !important;color:#fff !important;border:0 !important;
+  box-shadow:0 6px 22px rgba(255,46,99,.35),inset 0 1px 0 rgba(255,255,255,.25) !important;transition:transform .15s,box-shadow .2s !important}
+.chakra-button:hover{transform:translateY(-1px)}
+.chakra-input:focus, .chakra-select:focus, .chakra-textarea:focus, input:focus{border-color:var(--rx-r) !important;box-shadow:0 0 0 3px rgba(255,46,99,.22) !important}
+.chakra-switch__track[data-checked]{background:linear-gradient(90deg,var(--rx-r),var(--rx-c)) !important}
+.chakra-progress__filled-track{background:linear-gradient(90deg,var(--rx-c),var(--rx-r)) !important;box-shadow:0 0 12px rgba(255,46,99,.5)}
+.chakra-ui-dark tbody tr:hover td{background:rgba(255,46,99,.05) !important}
+.chakra-ui-dark thead th{color:#c9c3e6 !important;letter-spacing:.04em}
+.chakra-badge{border-radius:999px !important;padding-inline:.6em !important}
+.chakra-tabs__tab[aria-selected=true]{color:var(--rx-r) !important;border-color:var(--rx-r) !important}
+::-webkit-scrollbar-thumb{background:linear-gradient(var(--rx-r),var(--rx-c)) !important}
+::selection{background:rgba(255,46,99,.35)}
+/* brand mark in the header */
+.rx-brand{display:inline-flex;align-items:center;gap:.5rem;font-weight:800;letter-spacing:.14em;direction:ltr;font-size:1.05rem;
+  background:linear-gradient(90deg,#fff,var(--rx-r) 40%,var(--rx-g) 60%,var(--rx-c));background-size:220% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:rxsheen 6s linear infinite}
+.rx-brand i{width:22px;height:22px;border-radius:7px;background:radial-gradient(circle at 30% 25%,var(--rx-r2),var(--rx-r) 50%,#7a0026);box-shadow:0 0 16px rgba(255,46,99,.6);display:inline-block}
+@keyframes rxsheen{to{background-position:-220% 0}}
+/* login screen */
+.rx-login-glow{position:fixed;inset:-20%;z-index:0;pointer-events:none;background:conic-gradient(from 0deg at 50% 50%,rgba(255,46,99,.12),transparent 25%,rgba(8,217,214,.10) 50%,transparent 75%,rgba(255,46,99,.12));animation:rxspin 30s linear infinite;filter:blur(40px)}
+@keyframes rxspin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.rx-brand,.rx-login-glow{animation:none}}
