@@ -1739,7 +1739,7 @@
       var gh=document.querySelectorAll('a.github-button,iframe[src*="buttons.github.io"],a[aria-label*="GitHub"],a[href*="github.com"]');
       for(i=0;i<gh.length;i++) hide(gh[i].closest("span")||gh[i]);
       var form=document.querySelector("form");
-      var login=!!(form&&form.querySelector('input[name="password"]'))&&!document.querySelector("header");
+      var login=!!(form&&form.querySelector('input[name="password"]'))&&!document.querySelector(".chakra-table, table");
       var g=document.querySelector(".rx-login-glow");
       if(login&&!g){g=document.createElement("div");g.className="rx-login-glow";document.body.appendChild(g);}
       if(!login&&g)g.remove();
@@ -1753,8 +1753,9 @@
           head.insertBefore(hero,head.firstChild);
         }
       }
-      var hd=document.querySelector("header");
-      if(hd&&!hd.querySelector(".rx-mini")){var m=document.createElement("div");m.className="rx-brand rx-mini";m.innerHTML=LOGO+"<span>SABI-REX</span>";hd.insertBefore(m,hd.firstChild);}
+      var mini=document.querySelector(".rx-mini");
+      if(!login&&!mini&&document.querySelector(".chakra-table, table")){var m=document.createElement("div");m.className="rx-brand rx-mini rx-top";m.innerHTML=LOGO+"<span>SABI-REX</span>";document.body.appendChild(m);}
+      if(login&&mini)mini.remove();
     }catch(e){}
   }
   new MutationObserver(fix).observe(document.documentElement,{childList:true,subtree:true});

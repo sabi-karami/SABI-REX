@@ -164,3 +164,10 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opa
 .chakra-ui-dark .chakra-button[class*="css-"]:not(.chakra-menu__menu-button):not([aria-label]){--chakra-colors-primary-200:#ff2e63;--chakra-colors-primary-300:#ff5480}
 .chakra-ui-dark{--chakra-colors-primary-200:#ff2e63 !important;--chakra-colors-primary-300:#ff5480 !important;--chakra-colors-primary-100:#ff7a9c !important}
 .chakra-ui-dark input.chakra-input{background:rgba(255,255,255,.035) !important;border-color:rgba(255,255,255,.1) !important}
+
+/* v4.1 fixes */
+#rex-don,#rex-donfix{display:none !important}
+.rx-hero b{white-space:nowrap;font-size:clamp(34px,6.4vw,54px) !important}
+.rx-mini{display:inline-flex;align-items:center;gap:.5rem}
+.rx-top{position:fixed;top:14px;inset-inline-start:50%;transform:translateX(-50%);z-index:20;pointer-events:none}
+[dir=rtl] .rx-top{transform:translateX(50%)}
