@@ -52,7 +52,13 @@ except ValueError:
 REALITY_SNI = (os.environ.get("REX_REALITY_SNI") or "www.speedtest.net").strip()
 if TCP_DOMAIN and TCP_PORT and os.environ.get("REX_REALITY", "1") != "0":
     PATHS[REALITY_TAG] = ""
-PROTO = {REALITY_TAG: "Reality", LOCKED_TAG: "REX Core", "VLESS WS": "VLESS", "VMESS WS": "VMess", "TROJAN WS": "Trojan", "VLESS HTTPUPGRADE": "HTTPUpgrade", "VLESS XHTTP": "XHTTP", "VLESS XHTTP SU": "XHTTP"}
+SS_TAG = "SHADOWSOCKS TCP"
+if TCP_DOMAIN and TCP_PORT and os.environ.get("REX_REALITY", "1") == "0" and os.environ.get("REX_SS", "1") != "0":
+    PATHS[SS_TAG] = ""
+# ☁️ CDN Shield extras: Cloudflare edge IPs ("clean IPs") and extra HTTPS ports, so one blocked IP / port never kills the CDN route
+CDN_IPS = _list("REX_CDN_IPS", "104.16.0.1,172.67.0.1")
+CDN_PORTS = [int(p) for p in _list("REX_CDN_PORTS", "443,2053,8443") if p.isdigit() and int(p) in (443, 2053, 2083, 2087, 2096, 8443)] or [443]
+PROTO = {"SHADOWSOCKS TCP": "Shadowsocks", REALITY_TAG: "Reality", LOCKED_TAG: "REX Core", "VLESS WS": "VLESS", "VMESS WS": "VMess", "TROJAN WS": "Trojan", "VLESS HTTPUPGRADE": "HTTPUpgrade", "VLESS XHTTP": "XHTTP", "VLESS XHTTP SU": "XHTTP"}
 # route names (each config gets its own name; the apps still pick the fastest one with their ping test)
 R_RELAY, R_CDN_IP, R_CDN = "🚀 Turbo Iran", "🌩 Cloud Storm", "☁️ Cloud Shield"
 # Railway region of this service (works in all 4; Amsterdam = lowest ping from Iran)
@@ -123,6 +129,12 @@ def wanted(tag):
     """All routes for one inbound, best first (MCI / Irancell / TCI / Rightel each have a winner)."""
     if tag == REALITY_TAG:
         return reality_hosts() if REALITY_TAG in PATHS else []
+    if tag == SS_TAG:
+        if SS_TAG not in PATHS:
+            return []
+        return [{"remark": name("🥷 Shadow Ninja", SS_TAG), "address": TCP_DOMAIN, "port": TCP_PORT, "sni": "", "host": "", "path": "",
+                 "security": "none", "alpn": "", "fingerprint": "", "allowinsecure": False, "is_disabled": False,
+                 "mux_enable": False, "fragment_setting": None}]
     path = PATHS.get(tag)
     if not path:
         return []
@@ -139,9 +151,16 @@ def wanted(tag):
         out.append(base(path, address=CF_HOST, sni=CF_HOST, alpn=alpn, remark=n(R_CDN)))  # ☁️ Cloudflare by hostname
     if HAS_RAILWAY_DOMAIN:
         out.extend(direct(tag, path))                               # ⚡ straight to Railway: the 12 methods
-        if (tag in tunnel_tags() or tag in ("VLESS WS", "TROJAN WS")) and tag not in ("VLESS HTTPUPGRADE", "VLESS XHTTP", "VLESS XHTTP SU"):   # CDN workers carry WebSocket only
-            for k, d in enumerate(MIRRORS):                        # 🌐 same server, other domain names
-                out.append(base(path, address=d, sni=d, alpn=alpn, mux=True, remark=n(f"☁️ CDN Shield{'' if len(MIRRORS) == 1 else f' {k + 1}'}")))
+        # CDN workers carry WebSocket and plain HTTP (XHTTP packet-up), not HTTPUpgrade / stream-up
+        if (tag in tunnel_tags() or tag in ("VLESS WS", "TROJAN WS", "VLESS XHTTP")) and tag not in ("VLESS HTTPUPGRADE", "VLESS XHTTP SU"):
+            for k, d in enumerate(MIRRORS):
+                sfx = "" if len(MIRRORS) == 1 else f" {k + 1}"
+                out.append(base(path, address=d, sni=d, alpn=alpn, mux=tag not in XH_TAGS, remark=n(f"☁️ CDN Shield{sfx}")))
+                if tag == LOCKED_TAG:                                  # 🌩 same CDN route through Cloudflare edge IPs x HTTPS ports
+                    for j, ip in enumerate(CDN_IPS):
+                        for p in CDN_PORTS:
+                            out.append(base(path, address=ip, sni=d, port=p, alpn=alpn, fp=("chrome", "firefox", "safari", "edge")[(j + p) % 4],
+                                            remark=n(f"🌩 CDN Storm {p}{'' if len(CDN_IPS) == 1 else f' #{j + 1}'}{sfx}")))
     return out
 
 def tunnel_tags():

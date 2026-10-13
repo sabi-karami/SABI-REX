@@ -117,6 +117,15 @@ if _rp and os.environ.get("REX_REALITY", "1") != "0":
         except Exception as e:
             print(f"[lock] Reality skipped: {e}", flush=True)
 
+# 🥷 Shadowsocks on the Railway TCP Proxy (raw TCP, no web edge). Used when Reality is off (REX_REALITY=0) and REX_SS != 0.
+SS_TAG = "SHADOWSOCKS TCP"
+if _rp and os.environ.get("REX_REALITY", "1") == "0" and os.environ.get("REX_SS", "1") != "0" and core_knows("shadowsocks"):
+    extra.append({"tag": SS_TAG, "listen": "0.0.0.0", "port": _rp, "protocol": "shadowsocks",
+                  "settings": {"clients": [], "network": "tcp,udp"},
+                  "streamSettings": {"network": "tcp", "security": "none", "sockopt": {"tcpKeepAliveIdle": 30, "tcpKeepAliveInterval": 15}},
+                  "sniffing": {"enabled": True, "destOverride": ["http", "tls", "quic"], "routeOnly": True}})
+    print(f"[lock] Shadowsocks on TCP Proxy port {_rp}", flush=True)
+
 # 🚀 BBR: much steadier speed on lossy mobile networks. Turned on ONLY if this server's kernel allows it for us
 #    (otherwise Xray would refuse to connect, so we never guess).
 def bbr_ok():
@@ -257,7 +266,7 @@ if ok:
 else:
     print(f"[lock] WARNING: xray refused the config: {why}", flush=True)
     import copy
-    EXTRAS = [("Reality", drop_inbound("VLESS REALITY")), ("XHTTP", lambda c: (drop_inbound("VLESS XHTTP")(c), drop_inbound("VLESS XHTTP SU")(c))),
+    EXTRAS = [("Reality", drop_inbound("VLESS REALITY")), ("Shadowsocks", drop_inbound("SHADOWSOCKS TCP")), ("XHTTP", lambda c: (drop_inbound("VLESS XHTTP")(c), drop_inbound("VLESS XHTTP SU")(c))),
               ("HTTPUpgrade", drop_inbound("VLESS HTTPUPGRADE")), ("ad blocker", drop_adblock),
               ("BBR", drop_sockopt("tcpcongestion")), ("TCP Fast Open", drop_sockopt("tcpFastOpen")),
               ("WS heartbeat", drop_heartbeat)]
