@@ -4,6 +4,8 @@
 <img src="assets/tag-railway.svg"> <img src="assets/tag-xray.svg"> <img src="assets/tag-region.svg"> <img src="assets/tag-stealth.svg"> <img src="assets/tag-license.svg">
 </p>
 
+<p align="center"><img src="assets/typing.svg" width="80%"></p>
+
 <div dir="rtl">
 
 <h1 align="center">⬢ سابی‌رکس</h1>
@@ -14,13 +16,21 @@
 بدون سرور، بدون ترمینال، بدون سرتیفیکیت دستی.
 </p>
 
+</div>
+
 <p align="center"><img src="assets/stats.svg" width="100%"></p>
+
+<div dir="rtl">
 
 <p align="center"><img src="assets/divider.svg" width="100%"></p>
 
-## <img src="assets/i-arch.svg" width="28" align="center"> چرا سابی‌رکس؟
+## <img src="assets/i-why.svg" width="30" align="center"> چرا سابی‌رکس؟
+
+</div>
 
 <p align="center"><img src="assets/features.svg" width="100%"></p>
+
+<div dir="rtl">
 
 | | پنل معمولی | **SABI-REX** |
 |---|---|---|
@@ -35,7 +45,7 @@
 
 <p align="center"><img src="assets/divider.svg" width="100%"></p>
 
-## <img src="assets/i-install.svg" width="28" align="center"> نصب در ۷ قدم
+## <img src="assets/i-install.svg" width="30" align="center"> نصب در ۷ قدم
 
 > [!TIP]
 > کل نصب حدود **۵ دقیقه** است. فقط یک حساب GitHub و یک حساب Railway لازم داری.
@@ -70,7 +80,7 @@ PANEL_DOMAIN=panel.example.com   # اختیاری
 
 <p align="center"><img src="assets/divider.svg" width="100%"></p>
 
-## <img src="assets/i-login.svg" width="28" align="center"> ورود
+## <img src="assets/i-login.svg" width="30" align="center"> ورود
 
 | | آدرس |
 |---|---|
@@ -84,15 +94,19 @@ PANEL_DOMAIN=panel.example.com   # اختیاری
 
 <p align="center"><img src="assets/divider.svg" width="100%"></p>
 
-## <img src="assets/i-arch.svg" width="28" align="center"> معماری
+## <img src="assets/i-arch.svg" width="30" align="center"> معماری
+
+</div>
 
 <p align="center"><img src="assets/flow.svg" width="100%"></p>
+
+<div dir="rtl">
 
 Railway روی پورت **443** TLS را مدیریت می‌کند و همه‌چیز را به nginx روی **8080** می‌دهد. nginx بدون کوکی کلید، فقط صفحه‌ی ساده یا 404 نشان می‌دهد. لینک‌های اشتراک و مسیرهای کانفیگ همیشه باز هستند.
 
 <p align="center"><img src="assets/divider.svg" width="100%"></p>
 
-## <img src="assets/i-configs.svg" width="28" align="center"> ۱۲ کانفیگ آماده
+## <img src="assets/i-configs.svg" width="30" align="center"> ۱۲ کانفیگ آماده
 
 اسم همه با **سابی‌رکس | 𝗦𝗔𝗕𝗜-𝗥𝗘𝗫** شروع می‌شود.
 
@@ -116,7 +130,7 @@ Railway روی پورت **443** TLS را مدیریت می‌کند و همه‌
 
 <p align="center"><img src="assets/divider.svg" width="100%"></p>
 
-## <img src="assets/i-reseller.svg" width="28" align="center"> پنل نمایندگی
+## <img src="assets/i-reseller.svg" width="30" align="center"> پنل نمایندگی
 
 - پکیج‌های آماده و **حجم دلخواه از ۱ مگابایت تا نامحدود** (MB / GB / TB)
 - محدودیت **تعداد کاربر، حجم و تاریخ انقضا** سمت سرور
@@ -125,7 +139,7 @@ Railway روی پورت **443** TLS را مدیریت می‌کند و همه‌
 
 <p align="center"><img src="assets/divider.svg" width="100%"></p>
 
-## <img src="assets/i-guard.svg" width="28" align="center"> نگهبان خودکار
+## <img src="assets/i-guard.svg" width="30" align="center"> نگهبان خودکار
 
 | اگر این خراب شود | واکنش |
 |---|---|
@@ -138,7 +152,7 @@ Railway روی پورت **443** TLS را مدیریت می‌کند و همه‌
 
 <p align="center"><img src="assets/divider.svg" width="100%"></p>
 
-## <img src="assets/i-security.svg" width="28" align="center"> امنیت و استتار
+## <img src="assets/i-security.svg" width="30" align="center"> امنیت و استتار
 
 | | |
 |---|---|
@@ -152,7 +166,7 @@ Railway روی پورت **443** TLS را مدیریت می‌کند و همه‌
 
 <p align="center"><img src="assets/divider.svg" width="100%"></p>
 
-## <img src="assets/i-vars.svg" width="28" align="center"> متغیرها
+## <img src="assets/i-vars.svg" width="30" align="center"> متغیرها
 
 | متغیر | پیش‌فرض | توضیح |
 |---|---|---|
@@ -170,13 +184,13 @@ Railway روی پورت **443** TLS را مدیریت می‌کند و همه‌
 
 <p align="center"><img src="assets/divider.svg" width="100%"></p>
 
-## <img src="assets/i-update.svg" width="28" align="center"> به‌روزرسانی
+## <img src="assets/i-update.svg" width="30" align="center"> به‌روزرسانی
 
 در ریپوی خودت **Sync fork** ← **Update branch**. Railway خودش دوباره Deploy می‌کند و **کاربران، رمزها و نماینده‌ها دست نمی‌خورند.**
 
 <p align="center"><img src="assets/divider.svg" width="100%"></p>
 
-## <img src="assets/i-faq.svg" width="28" align="center"> سؤال‌ها
+## <img src="assets/i-faq.svg" width="30" align="center"> سؤال‌ها
 
 <details><summary><b>آدرس دامنه فقط Welcome to nginx نشان می‌دهد</b></summary>
 عمدی است. پنل را از <code>https://DOMAIN/&lt;REX_PANEL_KEY&gt;</code> باز کن.
