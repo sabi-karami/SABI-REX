@@ -56,8 +56,20 @@ SS_TAG = "SHADOWSOCKS TCP"
 if TCP_DOMAIN and TCP_PORT and os.environ.get("REX_REALITY", "1") == "0" and os.environ.get("REX_SS", "1") != "0":
     PATHS[SS_TAG] = ""
 # ☁️ CDN Shield extras: Cloudflare edge IPs ("clean IPs") and extra HTTPS ports, so one blocked IP / port never kills the CDN route
-CDN_IPS = _list("REX_CDN_IPS", "104.16.0.1,172.67.0.1")
-CDN_PORTS = [int(p) for p in _list("REX_CDN_PORTS", "443,2053,8443") if p.isdigit() and int(p) in (443, 2053, 2083, 2087, 2096, 8443)] or [443]
+#    12 edge IPs from 12 different Cloudflare ranges, each one on its own HTTPS port -> every range AND every port is covered
+CDN_IPS = _list("REX_CDN_IPS", "104.16.0.1,172.67.0.1,188.114.96.1,104.18.0.1,162.159.0.1,141.101.64.1,"
+                               "104.21.0.1,172.64.0.1,108.162.192.1,104.26.0.1,190.93.240.1,188.114.97.1")
+CDN_PORTS = [int(p) for p in _list("REX_CDN_PORTS", "443,2053,2083,2087,2096,8443") if p.isdigit() and int(p) in (443, 2053, 2083, 2087, 2096, 8443)] or [443]
+# 🌩 how many CDN Storm configs each transport gets (REX Core = all of them); offset = start at a different IP / port
+STORM = {LOCKED_TAG: (len(CDN_IPS), 0), "VLESS XHTTP": (4, 2), "VLESS WS": (2, 6), "TROJAN WS": (2, 9)}
+def storm_combos(tag):
+    n, off = STORM.get(tag, (0, 0))
+    if not CDN_IPS:
+        return []
+    return [(CDN_IPS[(off + k) % len(CDN_IPS)], CDN_PORTS[(off + k) % len(CDN_PORTS)]) for k in range(min(n, len(CDN_IPS)))]
+# 🚉 Railway Gate: the same server through its own *.up.railway.app name (still works if the custom domain is blocked)
+ALT_DOMAINS = [d for d in _list("REX_ALT_DOMAINS") if d and d != DOMAIN]
+ALT_TAGS = (LOCKED_TAG, "VLESS HTTPUPGRADE", "VLESS XHTTP")
 PROTO = {"SHADOWSOCKS TCP": "Shadowsocks", REALITY_TAG: "Reality", LOCKED_TAG: "REX Core", "VLESS WS": "VLESS", "VMESS WS": "VMess", "TROJAN WS": "Trojan", "VLESS HTTPUPGRADE": "HTTPUpgrade", "VLESS XHTTP": "XHTTP", "VLESS XHTTP SU": "XHTTP"}
 # route names (each config gets its own name; the apps still pick the fastest one with their ping test)
 R_RELAY, R_CDN_IP, R_CDN = "🚀 Turbo Iran", "🌩 Cloud Storm", "☁️ Cloud Shield"
@@ -153,14 +165,20 @@ def wanted(tag):
         out.extend(direct(tag, path))                               # ⚡ straight to Railway: the 12 methods
         # CDN workers carry WebSocket and plain HTTP (XHTTP packet-up), not HTTPUpgrade / stream-up
         if (tag in tunnel_tags() or tag in ("VLESS WS", "TROJAN WS", "VLESS XHTTP")) and tag not in ("VLESS HTTPUPGRADE", "VLESS XHTTP SU"):
+            shields = [d for d in MIRRORS if not d.endswith(".workers.dev")]
             for k, d in enumerate(MIRRORS):
-                sfx = "" if len(MIRRORS) == 1 else f" {k + 1}"
+                if d.endswith(".workers.dev"):                         # 🛡 Worker Gate: the same worker on Cloudflare's own name
+                    out.append(base(path, address=d, sni=d, alpn=alpn, mux=tag not in XH_TAGS, remark=n("🛡 Worker Gate")))
+                    continue
+                sfx = "" if len(shields) <= 1 else f" {shields.index(d) + 1}"
                 out.append(base(path, address=d, sni=d, alpn=alpn, mux=tag not in XH_TAGS, remark=n(f"☁️ CDN Shield{sfx}")))
-                if tag == LOCKED_TAG:                                  # 🌩 same CDN route through Cloudflare edge IPs x HTTPS ports
-                    for j, ip in enumerate(CDN_IPS):
-                        for p in CDN_PORTS:
-                            out.append(base(path, address=ip, sni=d, port=p, alpn=alpn, fp=("chrome", "firefox", "safari", "edge")[(j + p) % 4],
-                                            remark=n(f"🌩 CDN Storm {p}{'' if len(CDN_IPS) == 1 else f' #{j + 1}'}{sfx}")))
+                if d == shields[0]:                                    # 🌩 same CDN route through Cloudflare edge IPs x HTTPS ports
+                    for j, (ip, p) in enumerate(storm_combos(tag)):
+                        out.append(base(path, address=ip, sni=d, port=p, alpn=alpn, fp=("chrome", "firefox", "safari", "edge")[j % 4],
+                                        remark=n(f"🌩 CDN Storm {p} #{j + 1}")))
+        if tag in ALT_TAGS:
+            for k, d in enumerate(ALT_DOMAINS):
+                out.append(base(path, address=d, sni=d, alpn=alpn, fp="safari", remark=n("🚉 Railway Gate" + (f" {k + 1}" if len(ALT_DOMAINS) > 1 else ""))))
     return out
 
 def tunnel_tags():

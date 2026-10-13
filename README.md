@@ -181,6 +181,9 @@ Railway روی پورت **443** TLS را مدیریت می‌کند و همه‌
 | `RESET_ADMIN_PASSWORD` | — | `1` = بازگشت رمز به مقدار اولیه |
 | `REX_XHTTP` · `REX_FAST` · `REX_ADBLOCK` | `1` | `0` = خاموش |
 | `REX_EXTRA_DOMAINS` | — | دامنه‌های CDN Shield (با کاما) |
+| `REX_CDN_IPS` | ۱۲ IP از ۱۲ رنج Cloudflare | IPهای تمیز برای CDN Storm (با کاما) |
+| `REX_CDN_PORTS` | `443,2053,2083,2087,2096,8443` | پورت‌های HTTPS کلادفلر برای CDN Storm |
+| `REX_ALT_DOMAINS` | — | دامنه‌ی `*.up.railway.app` سرویس برای مسیر 🚉 Railway Gate |
 | `REX_FRAGMENT` | `10-20,10-20,tlshello` | فرگمنت قوی |
 | `REX_OLD_PATHS` | `0` | مسیرهای قدیمی بسته |
 | `DOCTOR_TG_TOKEN` · `DOCTOR_TG_CHAT` | — | هشدار نگهبان در تلگرام |
