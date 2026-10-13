@@ -61,7 +61,9 @@ CDN_IPS = _list("REX_CDN_IPS", "104.16.0.1,172.67.0.1,188.114.96.1,104.18.0.1,16
                                "104.21.0.1,172.64.0.1,108.162.192.1,104.26.0.1,190.93.240.1,188.114.97.1")
 CDN_PORTS = [int(p) for p in _list("REX_CDN_PORTS", "443,2053,2083,2087,2096,8443") if p.isdigit() and int(p) in (443, 2053, 2083, 2087, 2096, 8443)] or [443]
 # 🌩 how many CDN Storm configs each transport gets (REX Core = all of them); offset = start at a different IP / port
-STORM = {LOCKED_TAG: (len(CDN_IPS), 0), "VLESS XHTTP": (4, 2), "VLESS WS": (2, 6), "TROJAN WS": (2, 9)}
+STORM = {LOCKED_TAG: (len(CDN_IPS), 0), "VLESS XHTTP": (4, 2), "VLESS WS": (2, 6), "TROJAN WS": (2, 9), "VMESS WS": (2, 4)}
+# 🧩 Storm Shard: CDN Storm + TLS fragment (beats SNI filtering on the CDN route too): (tag, profile, ip/port offset)
+SHARDS = [(LOCKED_TAG, "strong", 3), (LOCKED_TAG, "light", 8), ("VLESS XHTTP", "light", 10)]
 def storm_combos(tag):
     n, off = STORM.get(tag, (0, 0))
     if not CDN_IPS:
@@ -69,7 +71,7 @@ def storm_combos(tag):
     return [(CDN_IPS[(off + k) % len(CDN_IPS)], CDN_PORTS[(off + k) % len(CDN_PORTS)]) for k in range(min(n, len(CDN_IPS)))]
 # 🚉 Railway Gate: the same server through its own *.up.railway.app name (still works if the custom domain is blocked)
 ALT_DOMAINS = [d for d in _list("REX_ALT_DOMAINS") if d and d != DOMAIN]
-ALT_TAGS = (LOCKED_TAG, "VLESS HTTPUPGRADE", "VLESS XHTTP")
+ALT_TAGS = (LOCKED_TAG, "VLESS HTTPUPGRADE", "VLESS XHTTP", "VLESS XHTTP SU", "VLESS WS", "TROJAN WS", "VMESS WS")
 PROTO = {"SHADOWSOCKS TCP": "Shadowsocks", REALITY_TAG: "Reality", LOCKED_TAG: "REX Core", "VLESS WS": "VLESS", "VMESS WS": "VMess", "TROJAN WS": "Trojan", "VLESS HTTPUPGRADE": "HTTPUpgrade", "VLESS XHTTP": "XHTTP", "VLESS XHTTP SU": "XHTTP"}
 # route names (each config gets its own name; the apps still pick the fastest one with their ping test)
 R_RELAY, R_CDN_IP, R_CDN = "🚀 Turbo Iran", "🌩 Cloud Storm", "☁️ Cloud Shield"
@@ -164,7 +166,7 @@ def wanted(tag):
     if HAS_RAILWAY_DOMAIN:
         out.extend(direct(tag, path))                               # ⚡ straight to Railway: the 12 methods
         # CDN workers carry WebSocket and plain HTTP (XHTTP packet-up), not HTTPUpgrade / stream-up
-        if (tag in tunnel_tags() or tag in ("VLESS WS", "TROJAN WS", "VLESS XHTTP")) and tag not in ("VLESS HTTPUPGRADE", "VLESS XHTTP SU"):
+        if (tag in tunnel_tags() or tag in ("VLESS WS", "TROJAN WS", "VMESS WS", "VLESS XHTTP")) and tag not in ("VLESS HTTPUPGRADE", "VLESS XHTTP SU"):
             shields = [d for d in MIRRORS if not d.endswith(".workers.dev")]
             for k, d in enumerate(MIRRORS):
                 if d.endswith(".workers.dev"):                         # 🛡 Worker Gate: the same worker on Cloudflare's own name
@@ -176,9 +178,15 @@ def wanted(tag):
                     for j, (ip, p) in enumerate(storm_combos(tag)):
                         out.append(base(path, address=ip, sni=d, port=p, alpn=alpn, fp=("chrome", "firefox", "safari", "edge")[j % 4],
                                         remark=n(f"🌩 CDN Storm {p} #{j + 1}")))
+                    shard = [s for s in SHARDS if s[0] == tag]
+                    for j, (_t, prof, off) in enumerate(shard):
+                        ip, p = CDN_IPS[off % len(CDN_IPS)], CDN_PORTS[off % len(CDN_PORTS)]
+                        if frag_of(prof):
+                            out.append(base(path, address=ip, sni=d, port=p, alpn=alpn, frag=frag_of(prof), fp=("chrome", "firefox")[j % 2],
+                                            remark=n(f"🧩 Storm Shard {p}" + (f" #{j + 1}" if len(shard) > 1 else ""))))
         if tag in ALT_TAGS:
             for k, d in enumerate(ALT_DOMAINS):
-                out.append(base(path, address=d, sni=d, alpn=alpn, fp="safari", remark=n("🚉 Railway Gate" + (f" {k + 1}" if len(ALT_DOMAINS) > 1 else ""))))
+                out.append(base(path, address=d, sni=d, alpn=alpn, fp="safari", remark=n(("🚉 Railway Gate" if tag != "VLESS XHTTP SU" else "🚄 Railway Express") + (f" {k + 1}" if len(ALT_DOMAINS) > 1 else ""))))
     return out
 
 def tunnel_tags():

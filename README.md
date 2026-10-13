@@ -184,6 +184,8 @@ Railway روی پورت **443** TLS را مدیریت می‌کند و همه‌
 | `REX_CDN_IPS` | ۱۲ IP از ۱۲ رنج Cloudflare | IPهای تمیز برای CDN Storm (با کاما) |
 | `REX_CDN_PORTS` | `443,2053,2083,2087,2096,8443` | پورت‌های HTTPS کلادفلر برای CDN Storm |
 | `REX_ALT_DOMAINS` | — | دامنه‌ی `*.up.railway.app` سرویس برای مسیر 🚉 Railway Gate |
+
+> **مسیرهای ضدفیلتر اضافه:** 🌩 **CDN Storm** (IP تمیز × پورت کلادفلر برای REX Core / XHTTP / VLESS / Trojan / VMess)، 🧩 **Storm Shard** (همان مسیر CDN با Fragment)، 🛡 **Worker Gate** (دامنه‌ی `*.workers.dev` ورکر؛ آن را در `REX_EXTRA_DOMAINS` بگذار) و 🚉 **Railway Gate** (دامنه‌ی Railway سرویس). gRPC روی دامنه‌های Railway پشتیبانی نمی‌شود چون Railway ترافیک را به HTTP/1.1 تبدیل می‌کند.
 | `REX_FRAGMENT` | `10-20,10-20,tlshello` | فرگمنت قوی |
 | `REX_OLD_PATHS` | `0` | مسیرهای قدیمی بسته |
 | `DOCTOR_TG_TOKEN` · `DOCTOR_TG_CHAT` | — | هشدار نگهبان در تلگرام |
