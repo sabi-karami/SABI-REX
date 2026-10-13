@@ -127,7 +127,7 @@ const STEPS=__STEPS__;const $=s=>document.getElementById(s);let CODE=sessionStor
 const show=v=>["vGate","vForm","vRun","vDone"].forEach(x=>$(x).classList.toggle("hide",x!==v));
 async function api(body){const r=await fetch("/api/step",{method:"POST",headers:{"content-type":"application/json","x-forge-code":CODE},body:JSON.stringify(body)});return r.json().catch(()=>({ok:false,error:"پاسخ نامعتبر ("+r.status+")"}))}
 async function gate(){const r=await fetch("/api/ping",{headers:{"x-forge-code":CODE}});if(r.ok){sessionStorage.setItem("fx",CODE);boot()}else{$("gErr").textContent="کد درست نیست";CODE=""}}
-$("bGate").onclick=()=>{CODE=$("code").value.trim();gate()};$("code").onkeydown=e=>e.key==="Enter"&&$("bGate").click();
+$("bGate").onclick=()=>{CODE=$("code").value.trim();gate()};$("code").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();$("bGate").click()}});
 document.querySelectorAll(".eye").forEach(b=>b.onclick=()=>{const i=$(b.dataset.t);i.type=i.type==="password"?"text":"password"});
 document.querySelectorAll("#reg .chip").forEach(c=>c.onclick=()=>{document.querySelectorAll("#reg .chip").forEach(x=>x.classList.remove("on"));c.classList.add("on")});
 document.querySelectorAll(".tog").forEach(t=>t.onclick=()=>t.classList.toggle("on"));
